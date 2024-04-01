@@ -53,7 +53,7 @@ const CardList = () => {
         }}
       >
         {cards.map((card, index) => (
-          <Card key={index} card={card} scrollY={scrollY} />
+          <Card key={index} index={index} card={card} scrollY={scrollY} />
         ))}
       </View>
     </GestureDetector>
