@@ -1,6 +1,8 @@
-import Animated from "react-native-reanimated";
+import Animated, { useDerivedValue } from "react-native-reanimated";
 
 const Card = ({ index, card, scrollY }) => {
+  const translateY = useDerivedValue(() => -scrollY.value);
+
   return (
     <Animated.Image
       key={index}
@@ -12,7 +14,7 @@ const Card = ({ index, card, scrollY }) => {
         marginVertical: 5,
         transform: [
           {
-            translateY: scrollY,
+            translateY: translateY,
           },
         ],
       }}

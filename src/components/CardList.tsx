@@ -1,6 +1,10 @@
 import { View, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useSharedValue } from "react-native-reanimated";
+import Animated, {
+  cancelAnimation,
+  useSharedValue,
+  withDecay,
+} from "react-native-reanimated";
 import Card from "./Card";
 
 const cards = [
@@ -18,6 +22,9 @@ const cards = [
 const CardList = () => {
   const scrollY = useSharedValue(0);
   const pan = Gesture.Pan()
+    .onBegin(() => {
+      cancelAnimation(scrollY);
+    })
     .onStart(() => {
       console.log("Start");
     })
@@ -25,8 +32,11 @@ const CardList = () => {
       scrollY.value = scrollY.value - event.changeY;
       console.log("Scroll: ", scrollY.value);
     })
-    .onEnd(() => {
+    .onEnd((event) => {
       console.log("End");
+      scrollY.value = withDecay({
+        velocity: -event.velocityY,
+      });
     });
 
   return (
