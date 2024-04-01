@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Animated, {
+  Easing,
   clamp,
   useAnimatedReaction,
   useDerivedValue,
@@ -38,10 +39,15 @@ const Card = ({ card, scrollY, index, activeCardIndex }) => {
           clamp(-scrollY.value, -index * cardHeight, 0)
         );
       } else if (activeCardIndex.value === index) {
-        translateY.value = withTiming(-index * cardHeight);
+        translateY.value = withTiming(-index * cardHeight, {
+          easing: Easing.out(Easing.quad),
+        });
       } else {
         translateY.value = withTiming(
-          -index * cardHeight * 0.9 + screenHeight * 0.7
+          -index * cardHeight * 0.9 + screenHeight * 0.7,
+          {
+            easing: Easing.out(Easing.quad),
+          }
         );
       }
     }
