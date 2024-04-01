@@ -4,26 +4,48 @@ import Animated, {
   useAnimatedReaction,
   useDerivedValue,
   useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useWindowDimensions } from "react-native";
 
 const Card = ({ card, scrollY, index, activeCardIndex }) => {
   const [cardHeight, setCardHeight] = useState(0);
+  const { height: screenHeight } = useWindowDimensions();
   const translateY = useSharedValue(0);
+  const tap = Gesture.Tap().onEnd(() => {
+    if (activeCardIndex.value === null) {
+      activeCardIndex.value = index;
+    } else {
+      activeCardIndex.value = null;
+    }
+  });
+
   useAnimatedReaction(
-    () => {
-      return scrollY.value;
-    },
-    (current, previous) => {
+    () => scrollY.value,
+    (current) => {
       translateY.value = clamp(-current, -index * cardHeight, 0);
     }
   );
-  // const translateY = useDerivedValue(() =>
-  //   clamp(-scrollY.value, -index * cardHeight, 0)
-  // );
-  const tap = Gesture.Tap().onEnd(() => {
-    activeCardIndex.value = index;
-  });
+
+  useAnimatedReaction(
+    () => activeCardIndex.value,
+    (current, previous) => {
+      if (current === previous) return;
+
+      if (activeCardIndex.value === null) {
+        translateY.value = withTiming(
+          clamp(-scrollY.value, -index * cardHeight, 0)
+        );
+      } else if (activeCardIndex.value === index) {
+        translateY.value = withTiming(-index * cardHeight);
+      } else {
+        translateY.value = withTiming(
+          -index * cardHeight * 0.9 + screenHeight * 0.7
+        );
+      }
+    }
+  );
 
   return (
     <GestureDetector gesture={tap}>
