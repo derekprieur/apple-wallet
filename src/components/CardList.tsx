@@ -1,5 +1,7 @@
-import { View, Text, Image } from "react-native";
+import { View, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { useSharedValue } from "react-native-reanimated";
+import Card from "./Card";
 
 const cards = [
   require("../../assets/cards/Card 1.png"),
@@ -14,12 +16,14 @@ const cards = [
 ];
 
 const CardList = () => {
+  const scrollY = useSharedValue(0);
   const pan = Gesture.Pan()
     .onStart(() => {
       console.log("Start");
     })
     .onChange((event) => {
-      console.log("Change", event);
+      scrollY.value = scrollY.value - event.changeY;
+      console.log("Scroll: ", scrollY.value);
     })
     .onEnd(() => {
       console.log("End");
@@ -33,16 +37,7 @@ const CardList = () => {
         }}
       >
         {cards.map((card, index) => (
-          <Image
-            key={index}
-            source={card}
-            style={{
-              width: "100%",
-              aspectRatio: 7 / 4,
-              height: undefined,
-              marginVertical: 5,
-            }}
-          />
+          <Card card={card} index={index} scrollY={scrollY} />
         ))}
       </View>
     </GestureDetector>
