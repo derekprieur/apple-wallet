@@ -1,11 +1,10 @@
 import Animated, { useDerivedValue } from "react-native-reanimated";
 
-const Card = ({ index, card, scrollY }) => {
+const Card = ({ card, scrollY }) => {
   const translateY = useDerivedValue(() => -scrollY.value);
 
   return (
     <Animated.Image
-      key={index}
       source={card}
       style={{
         width: "100%",
